@@ -8,11 +8,23 @@ public class Deck {
         cards = new ArrayList<>();
         for (int i = 0; i < ranks.length; i++) {
             for (String suit : suits) {
-                cards.add(new Card(ranks[i], suit, values[i]));
+                if (!suit.equals("special")) {
+                    cards.add(new Card(ranks[i], suit, values[i]));
+                    cards.add(new Card(ranks[i], suit, values[i]));
+                }
+
             }
         }
+        for (int i = 0; i < 2; i++) {
+            cards.add(new Card("Wild", "special", 2));
+            cards.add(new Card("Draw4", "special", 2));
+        }
         cardsLeft = cards.size();
-        // shuffle cards
+        this.shuffle();
+    }
+
+    public ArrayList<Card> getCards() {
+        return cards;
     }
 
     public boolean isEmpty() {
@@ -34,7 +46,7 @@ public class Deck {
     public void shuffle() {
         cardsLeft = this.cards.size();
 
-        for (int i = cardsLeft - 1; i > 0; i++) {
+        for (int i = cardsLeft - 1; i > 0; i--) {
             int r = (int) (Math.random() * i + 1);
             Card temp = this.cards.get(i);
             this.cards.set(i, this.cards.get(r));
