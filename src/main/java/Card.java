@@ -3,10 +3,10 @@ public class Card {
     private String suit;
     private int value;
 
-    public Card(int value, String suit, String rank) {
-        this.value = value;
-        this.suit = suit;
+    public Card(String rank, String suit, int value) {
         this.rank = rank;
+        this.suit = suit;
+        this.value = value;
     }
 
     public String getRank() {
