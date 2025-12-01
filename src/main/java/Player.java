@@ -8,6 +8,7 @@ public class Player {
     public Player(String name) {
         this.name = name;
         this.points = 0;
+        this.hand = new ArrayList<>();
     }
 
     public Player(String name, ArrayList<Card> hand) {
