@@ -17,9 +17,9 @@ public class Game {
         }
         System.out.println("What is your name: ");
         this.players[players - 1] = new Player(input.nextLine());
-        String[] ranks = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Reverse", "Skip", "Draw2"};
+        String[] ranks = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Draw2"};
         String[] suits = {"red", "green", "yellow", "blue"};
-        int[] values = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1};
+        int[] values = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
         deck = new Deck(ranks, suits, values);
         lastCard = this.deck.deal();
     }
@@ -71,25 +71,30 @@ public class Game {
                 } else {
                     Card card = player.getHand().get(Integer.parseInt(action.split(" ")[1]) - 1);
                     if (card.getRank().equals("Wild")) {
-                        // pickColor()
+                        card.setSuit(pickColor());
                     } else if (card.getRank().equals("Draw4")) {
                         drawCards(4, nextPlayer);
-                        // pickColor()
+                        card.setSuit(pickColor());
                     } else if (card.getRank().equals("Draw2")) {
                         drawCards(2, nextPlayer);
-                    } else if (card.getRank().equals("Skip")) {
-                        // skip()
-                    } else if (card.getRank().equals("Reverse")) {
-                        // reverse()
                     }
                     return player.getHand().remove(Integer.parseInt(action.split(" ")[1]) - 1);
 
                 }
             } else {
                 for (Card card : player.getHand()) {
+
                     if (this.checkValid(card)) {
-                        System.out.println(player.getName() + " plays " + card + " with " + player.getHand().size() + " cards left.");
-                        return card;
+                        if (card.getRank().equals("Wild")) {
+                            card.setSuit(cpuPickColor());
+                        } else if (card.getRank().equals("Draw4")) {
+                            drawCards(4, nextPlayer);
+                            card.setSuit(cpuPickColor());
+                        } else if (card.getRank().equals("Draw2")) {
+                            drawCards(2, nextPlayer);
+                        }
+                        System.out.println(player.getName() + " plays " + card + " with " + (player.getHand().size() - 1) + " cards left.");
+                        return player.getHand().remove(player.getHand().indexOf(card));
                     }
                 }
                 player.addCard(this.deck.deal());
@@ -100,6 +105,17 @@ public class Game {
 
 
         }
+    }
+
+    public String cpuPickColor() {
+        String[] colors = {"red", "green", "yellow", "blue"};
+        return colors[(int) (Math.random() * 4)];
+    }
+
+    public String pickColor() {
+        Scanner input = new Scanner(System.in);
+        System.out.println("What color do you want to choose?");
+        return input.nextLine();
     }
 
     public void drawCards(int numCards, Player player) {
@@ -122,8 +138,7 @@ public class Game {
                         "have an available card.\nYou can only play a card if it is the same color or number as the " +
                         " previous card (unless it is a Wild or Draw 4. The goal of the game is end with no cards." +
                         "\nSpecial cards:\n - Draw 2: The next person must draw 2 cards " +
-                        "(you can stack on draw 2's)\n - Skip: Skips the next person\n - Reverse: Reverses order " +
-                        "of play\n - Wild: Lets you choose the color\n - Draw 4: Wild + makes the next person Draw 4";
+                        "\n - Wild: Lets you choose the color\n - Draw 4: Wild + makes the next person Draw 4";
 
         System.out.println(string);
     }
