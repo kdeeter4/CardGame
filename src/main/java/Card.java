@@ -1,20 +1,17 @@
 public class Card {
+    // Instance Variables
     private String rank;
     private String suit;
-    private int value;
 
-    public Card(String rank, String suit, int value) {
+    // Constructor
+    public Card(String rank, String suit) {
         this.rank = rank;
         this.suit = suit;
-        this.value = value;
     }
 
+    // Getters + Setters
     public String getRank() {
         return rank;
-    }
-
-    public void setRank(String rank) {
-        this.rank = rank;
     }
 
     public String getSuit() {
@@ -25,14 +22,7 @@ public class Card {
         this.suit = suit;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
+    // String output
     @Override
     public String toString() {
         return this.suit + this.rank;

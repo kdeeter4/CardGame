@@ -1,38 +1,41 @@
 import java.util.ArrayList;
 
 public class Deck {
-    ArrayList<Card> cards;
-    int cardsLeft;
+    // Instance Variables
+    private ArrayList<Card> cards;
+    private int cardsLeft;
 
-    public Deck(String[] ranks, String[] suits, int[] values) {
+    // Constructors
+    public Deck(String[] ranks, String[] suits) {
+        // Making the cards
         cards = new ArrayList<>();
         for (int i = 0; i < ranks.length; i++) {
             for (String suit : suits) {
-                cards.add(new Card(ranks[i], suit, values[i]));
-                cards.add(new Card(ranks[i], suit, values[i]));
+                cards.add(new Card(ranks[i], suit));
+                cards.add(new Card(ranks[i], suit));
 
             }
         }
         for (int i = 0; i < 2; i++) {
-            cards.add(new Card("Wild", "", 2));
-            cards.add(new Card("Draw4", "", 2));
+            cards.add(new Card("Wild", ""));
+            cards.add(new Card("Draw4", ""));
         }
+
         cardsLeft = cards.size();
         this.shuffle();
     }
 
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
-
+    // Checks if the deck is empty
     public boolean isEmpty() {
         return this.cardsLeft == 0;
     }
 
+    // Returns the number of remaining cards
     public int getCardsLeft() {
         return this.cardsLeft;
     }
 
+    // Removes a card and returns it
     public Card deal() {
         if (this.isEmpty()) {
             return null;
@@ -41,6 +44,7 @@ public class Deck {
         return this.cards.get(this.cardsLeft-- - 1);
     }
 
+    // Reorders the cards
     public void shuffle() {
         cardsLeft = this.cards.size();
 

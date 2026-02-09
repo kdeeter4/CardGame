@@ -1,22 +1,17 @@
 import java.util.ArrayList;
 
 public class Player {
-    String name;
-    ArrayList<Card> hand;
-    int points;
+    // Instance Variables
+    private String name;
+    private ArrayList<Card> hand;
 
+    // Constructors
     public Player(String name) {
         this.name = name;
-        this.points = 0;
         this.hand = new ArrayList<>();
     }
 
-    public Player(String name, ArrayList<Card> hand) {
-        this.name = name;
-        this.hand = hand;
-        this.points = 0;
-    }
-
+    // Getters
     public String getName() {
         return name;
     }
@@ -25,20 +20,8 @@ public class Player {
         return hand;
     }
 
-    public int getPoints() {
-        return points;
-    }
-
-    public void addPoints(int points) {
-        this.points += points;
-    }
-
+    // Adds a card
     public void addCard(Card card) {
         this.hand.add(card);
-    }
-
-    @Override
-    public String toString() {
-        return this.name + " has " + this.points + " points\n" + this.name + "'s cards: " + this.hand;
     }
 }
