@@ -79,16 +79,27 @@ public class Game {
                 System.out.println("What do you want to do? Either type in 'draw' or 'play [# of Card in array]'");
                 String action;
                 int index;
+                boolean condition;
                 boolean correctFormat;
                 do {
                     System.out.println("Play a valid action: ");
                     action = input.nextLine();
-                    index = Integer.parseInt(action.split(" ")[1]) - 1;
-                    correctFormat = (action.equals("draw") || (action.startsWith("play ")));
-                } while (!correctFormat || !this.checkValid(player.getHand().get(index)));
+                    correctFormat = (action.equals("sort") || action.equals("draw") || (action.startsWith("play ")));
+                    if (action.startsWith("play ")) {
+                        index = Integer.parseInt(action.split(" ")[1]) - 1;
+                        condition = !correctFormat || !this.checkValid(player.getHand().get(index));
+                    } else {
+                        condition = !correctFormat;
+                    }
+                } while (condition);
 
-                // Let the player draw a card
-                if (action.equals("draw")) {
+
+
+                // Allows the users to sort the cards
+                if (action.equals("sort")) {
+                    player.sortHand();
+                } else if (action.equals("draw")) {
+                    // Let the player draw a card
                     Card addedCard = this.deck.deal();
                     player.addCard(addedCard);
                     System.out.println(addedCard);
