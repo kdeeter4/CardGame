@@ -1,32 +1,43 @@
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Scanner;
+import java.awt.Color;
 
-public class Game {
+
+public class Game implements MouseListener {
     // Instance Variables
-    private Player[] players;
-    private Deck deck;
+    private final Player[] players;
+    private final Deck deck;
     private boolean gameIsOver;
     private Card lastCard;
+    private GameView window;
+
+    private final int numPlayers = 4;
 
     // Constructor
-    public Game(int players) {
+    public Game() {
+
         gameIsOver = false;
-        this.players = new Player[players];
+        this.players = new Player[numPlayers];
+
         Scanner input = new Scanner(System.in);
 
         // Creates computer players
-        for (int i = 0; i < players - 1; i++) {
+        for (int i = 0; i < numPlayers - 1; i++) {
             this.players[i] = new Player("Computer " + (i+1));
         }
 
         // Creates human player
         System.out.println("What is your name: ");
-        this.players[players - 1] = new Player(input.nextLine());
+        this.players[numPlayers - 1] = new Player(input.nextLine());
 
         // Creates deck
         String[] ranks = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Draw2"};
-        String[] suits = {"red", "green", "yellow", "blue"};
+        Color[] suits = {Color.red, Color.green, Color.yellow, Color.blue};
         deck = new Deck(ranks, suits);
         lastCard = this.deck.deal();
+
+        window = new GameView(this);
     }
 
     // Main game loop for entire round
@@ -106,13 +117,13 @@ public class Game {
                 } else {
                     // Perform special card actions
                     Card card = player.getHand().get(Integer.parseInt(action.split(" ")[1]) - 1);
-                    if (card.getRank().equals("Wild")) {
-                        card.setSuit(pickColor());
-                    } else if (card.getRank().equals("Draw4")) {
-                        drawCards(4, nextPlayer);
-                        card.setSuit(pickColor());
-                    } else if (card.getRank().equals("Draw2")) {
-                        drawCards(2, nextPlayer);
+                    switch (card.getRank()) {
+                        case "Wild" -> card.setSuit(pickColor());
+                        case "Draw4" -> {
+                            drawCards(4, nextPlayer);
+                            card.setSuit(pickColor());
+                        }
+                        case "Draw2" -> drawCards(2, nextPlayer);
                     }
 
                     // Remove the card from the hand and "play" the card
@@ -122,13 +133,13 @@ public class Game {
                 // Computer actoin which cycles through each of their cards and plays the first valid one
                 for (Card card : player.getHand()) {
                     if (this.checkValid(card)) {
-                        if (card.getRank().equals("Wild")) {
-                            card.setSuit(cpuPickColor());
-                        } else if (card.getRank().equals("Draw4")) {
-                            drawCards(4, nextPlayer);
-                            card.setSuit(cpuPickColor());
-                        } else if (card.getRank().equals("Draw2")) {
-                            drawCards(2, nextPlayer);
+                        switch (card.getRank()) {
+                            case "Wild" -> card.setSuit(cpuPickColor());
+                            case "Draw4" -> {
+                                drawCards(4, nextPlayer);
+                                card.setSuit(cpuPickColor());
+                            }
+                            case "Draw2" -> drawCards(2, nextPlayer);
                         }
 
                         // Prints out the move and plays the card
@@ -146,16 +157,26 @@ public class Game {
     }
 
     // Picking a color when the computer plays a wild or draw 4
-    public String cpuPickColor() {
-        String[] colors = {"red", "green", "yellow", "blue"};
+    public Color cpuPickColor() {
+        Color[] colors = {Color.red, Color.green, Color.yellow, Color.blue};
         return colors[(int) (Math.random() * 4)];
     }
 
     // Picking a color when the player plays a wild or darw 4
-    public String pickColor() {
+    public Color pickColor() {
         Scanner input = new Scanner(System.in);
         System.out.println("What color do you want to choose?");
-        return input.nextLine();
+        switch (input.nextLine().toLowerCase()) {
+            case "red":
+                return Color.red;
+            case "green":
+                return Color.green;
+            case "yellow":
+                return Color.yellow;
+            case "blue":
+                return Color.blue;
+        }
+        return Color.red;
     }
 
     // Dealing the cards when a draw 4 or draw 2 is played
@@ -167,7 +188,7 @@ public class Game {
 
     // Checks if the card is avaliable by comparing it to the previous card played
     public boolean checkValid(Card card) {
-        if (card.getSuit().isEmpty()) {
+        if (card.getSuit().equals(Color.black)) {
             return true;
         } else if (card.getRank().equals(this.lastCard.getRank())) {
             return true;
@@ -195,12 +216,29 @@ public class Game {
         }
     }
 
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    public void mouseExited(MouseEvent e) {
+
+    }
+
     // Main method creates the game object
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        System.out.println("How many players: ");
-        Game uno = new Game(input.nextInt());
-        input.nextLine();
+        Game uno = new Game();
         uno.playGame();
     }
 }

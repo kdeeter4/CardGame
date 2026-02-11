@@ -1,24 +1,27 @@
 import java.util.ArrayList;
+import java.awt.Color;
+
 
 public class Deck {
     // Instance Variables
     private ArrayList<Card> cards;
     private int cardsLeft;
 
+
     // Constructors
-    public Deck(String[] ranks, String[] suits) {
+    public Deck(String[] ranks, Color[] suits) {
         // Making the cards
         cards = new ArrayList<>();
         for (int i = 0; i < ranks.length; i++) {
-            for (String suit : suits) {
+            for (Color suit : suits) {
                 cards.add(new Card(ranks[i], suit));
                 cards.add(new Card(ranks[i], suit));
 
             }
         }
         for (int i = 0; i < 2; i++) {
-            cards.add(new Card("Wild", ""));
-            cards.add(new Card("Draw4", ""));
+            cards.add(new Card("Wild", Color.black));
+            cards.add(new Card("Draw4", Color.black));
         }
 
         cardsLeft = cards.size();
