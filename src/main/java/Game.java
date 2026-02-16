@@ -11,8 +11,25 @@ public class Game implements MouseListener {
     private boolean gameIsOver;
     private Card lastCard;
     private GameView window;
+    private int turn;
 
     private final int numPlayers = 4;
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public Card getLastCard() {
+        return this.lastCard;
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public Deck getDeck() {
+        return this.deck;
+    }
 
     // Constructor
     public Game() {
@@ -24,17 +41,17 @@ public class Game implements MouseListener {
 
         // Creates computer players
         for (int i = 0; i < numPlayers - 1; i++) {
-            this.players[i] = new Player("Computer " + (i+1));
+            this.players[i] = new Player("Computer " + (i+1), this);
         }
 
         // Creates human player
         System.out.println("What is your name: ");
-        this.players[numPlayers - 1] = new Player(input.nextLine());
+        this.players[numPlayers - 1] = new Player(input.nextLine(), this);
 
         // Creates deck
         String[] ranks = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Draw2"};
         Color[] suits = {Color.red, Color.green, Color.yellow, Color.blue};
-        deck = new Deck(ranks, suits);
+        deck = new Deck(ranks, suits, this);
         lastCard = this.deck.deal();
 
         window = new GameView(this);
@@ -48,12 +65,23 @@ public class Game implements MouseListener {
 
         // Variables to keep track of who's turn it is
         int step = 0;
-        int turn;
 
         // Game loop
         while (!gameIsOver) {
             // Determining who's turn it is and then executing the turn
+            window.repaint();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             turn = step % this.players.length;
+            window.repaint();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             this.lastCard = this.playTurn(turn);
             this.gameIsOver = this.checkGameOver();
             step++;
@@ -84,6 +112,7 @@ public class Game implements MouseListener {
             // Human turn instructions
             if (!computerTurn) {
                 // Prompting user for an action, parses the input and then checks if the turn is valid
+
                 System.out.println();
                 System.out.println(player.getHand());
                 System.out.println("Current card: " + this.lastCard);

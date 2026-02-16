@@ -7,11 +7,13 @@ public class Player {
     private ArrayList<Card> hand;
     private final int cardWidth = 70;
     private final int cardHeight = 100;
+    private Game game;
 
     // Constructors
-    public Player(String name) {
+    public Player(String name, Game game) {
         this.name = name;
         this.hand = new ArrayList<>();
+        this.game = game;
     }
 
     // Getters
@@ -60,13 +62,32 @@ public class Player {
         hand.sort((a,b) -> {return this.orderCard(a, b);});
     }
 
-    public void drawCpuHand(int x, int y, Graphics g) {
+    public void drawCpu(int x, int y, Graphics g, int number) {
         g.setColor(Color.black);
         g.fillRect(x, y, cardWidth, cardHeight);
 
         g.setColor(Color.white);
-        g.drawOval(x + 20, y + 50, 20, 20);
-        g.drawString(Integer.toString(this.hand.size()), x, y);
+        g.fillOval(x + 35, y + 60, 30, 30);
+        g.setColor(Color.black);
+        if (this.hand.size()<10) {
+            g.setFont(new Font("Arial", Font.BOLD, 30));
+            g.drawString(Integer.toString(this.hand.size()), x+42, y+85);
+        } else {
+            g.setFont(new Font("Arial", Font.BOLD, 23));
+            g.drawString(Integer.toString(this.hand.size()), x+37, y+85);
+
+        }
+        if (number - 1 == game.getTurn()) {
+            g.setColor(Color.blue);
+        }
+        g.drawString("Computer " + number, x-40, y-20);
+    }
+
+    public void drawPlayer(int x, int y, Graphics g) {
+        for (int i = 0; i < 7; i ++) {
+            this.hand.get(i).draw(x - 430 + i * 110, y, g);
+        }
+        g.drawString(this.name, x, y+150);
     }
 
 }

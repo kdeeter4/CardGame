@@ -21,8 +21,11 @@ public class GameView extends JFrame {
         g.setColor(new Color(2, 82, 8));
         g.fillRect(0, 0, 1000, 1000);
 
-        Player p = new Player("J");
-        p.drawCpuHand(10, 10, g);
+        backend.getDeck().draw(465, 475, g);
+        backend.getPlayers()[0].drawCpu(65, 475, g, 1);
+        backend.getPlayers()[1].drawCpu(465, 98, g, 2);
+        backend.getPlayers()[2].drawCpu(865, 475, g, 3);
+        backend.getPlayers()[3].drawPlayer(500, 825, g);
 
     }
 }
