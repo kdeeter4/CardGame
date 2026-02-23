@@ -8,12 +8,14 @@ public class Player {
     private final int cardWidth = 70;
     private final int cardHeight = 100;
     private Game game;
+    private int startIndex;
 
     // Constructors
     public Player(String name, Game game) {
         this.name = name;
         this.hand = new ArrayList<>();
         this.game = game;
+        startIndex = 0;
     }
 
     // Getters
@@ -83,8 +85,20 @@ public class Player {
         g.drawString("Computer " + number, x-40, y-20);
     }
 
+    public void changeIndex(boolean posneg) {
+        if (posneg) {
+            startIndex += 7;
+        } else {
+            startIndex -= 7;
+        }
+    }
+
     public void drawPlayer(int x, int y, Graphics g) {
-        for (int i = 0; i < 7; i ++) {
+        int showSize=7;
+        if (this.hand.size() - startIndex< 7) {
+            showSize = this.hand.size();
+        }
+        for (int i = this.startIndex; i < startIndex + showSize; i ++) {
             this.hand.get(i).draw(x - 430 + i * 110, y, g);
         }
         g.drawString(this.name, x, y+150);

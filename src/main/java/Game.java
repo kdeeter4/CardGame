@@ -13,6 +13,7 @@ public class Game implements MouseListener {
     private GameView window;
     private int turn;
 
+
     private final int numPlayers = 4;
 
     public int getTurn() {
@@ -55,6 +56,8 @@ public class Game implements MouseListener {
         lastCard = this.deck.deal();
 
         window = new GameView(this);
+
+        this.window.addMouseListener(this);
     }
 
     // Main game loop for entire round
@@ -245,7 +248,35 @@ public class Game implements MouseListener {
         }
     }
 
+    private boolean clickedInstructions(int x, int y) {
+        if (x<990 && x>950 && y < 90 && y > 40) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean clickedSort(int x, int y) {
+        if (x<970 && x>870 && y < 900 && y > 850) {
+            return true;
+        }
+        return false;
+    }
+    public boolean clickedRight(int x, int y) {
+        return true;
+    }
+
     public void mouseClicked(MouseEvent e) {
+        if (this.clickedInstructions(e.getX(), e.getY())) {
+            window.setInstructScreen();
+        }
+        window.repaint();
+
+        if (this.clickedSort(e.getX(), e.getY())) {
+            this.players[numPlayers - 1].sortHand();
+        }
+        window.repaint();
+
+
 
     }
 

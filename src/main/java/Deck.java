@@ -22,8 +22,8 @@ public class Deck {
             }
         }
         for (int i = 0; i < 2; i++) {
-            cards.add(new Card("Wild", Color.black));
-            cards.add(new Card("Draw4", Color.black));
+            cards.add(new Card("Wild", Color.white));
+            cards.add(new Card("Draw4", Color.white));
         }
 
         cardsLeft = cards.size();
