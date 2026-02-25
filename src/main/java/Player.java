@@ -111,6 +111,10 @@ public class Player {
             this.hand.get(i).setY(y);
             this.hand.get(i).draw(g);
         }
+        g.setColor(Color.black);
+        if (game.getPlayerMove()) {
+            g.setColor(Color.blue);
+        }
         g.drawString(this.name, x, y+150);
     }
 

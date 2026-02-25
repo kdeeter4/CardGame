@@ -24,6 +24,13 @@ public class GameView extends JFrame {
     }
 
     public void paint(Graphics g) {
+        if (backend.getGameIsOver()) {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
         g.setColor(new Color(2, 82, 8));
         g.fillRect(0, 0, 1000, 1000);
 
@@ -51,15 +58,15 @@ public class GameView extends JFrame {
 
 
             return;
-        } else if (backend.checkGameOver()) {
+        } else if (backend.getGameIsOver()) {
             String s;
+            s="Game over";
             for (Player player : backend.getPlayers()) {
                 if (player.getHand().isEmpty()) {
                     s = player.getName();
                     s += " wins";
                 }
             }
-            s="Game over";
             g.drawString(s, 10, 100);
             return;
         }
@@ -94,5 +101,18 @@ public class GameView extends JFrame {
         backend.getPlayers()[2].drawCpu(865, 475, g, 3);
         backend.getPlayers()[3].drawPlayer(500, 825, g);
 
+        if (backend.getPickColorScreen()) {
+            g.setColor(Color.gray);
+            g.fillRect(395, 700, 210, 75);
+            g.setColor(Color.red);
+            g.fillRect(405, 710, 40, 55);
+            g.setColor(Color.yellow);
+            g.fillRect(455, 710, 40, 55);
+            g.setColor(Color.green);
+            g.fillRect(505, 710, 40, 55);
+            g.setColor(Color.blue);
+            g.fillRect(555, 710, 40, 55);
+        }
     }
+
 }

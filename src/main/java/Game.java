@@ -12,10 +12,19 @@ public class Game implements MouseListener {
     private Card lastCard;
     private GameView window;
     private int turn;
-    private boolean playerMoved;
+    private boolean playerMove;
+    private boolean pickColorScreen;
+    private Color pickedColor;
+    private Card selectedCard;
+
+    public boolean getPickColorScreen() {
+        return pickColorScreen;
+    }
 
 
-
+    public boolean getPlayerMove() {
+        return playerMove;
+    }
     private final int numPlayers = 4;
 
     public int getTurn() {
@@ -36,7 +45,9 @@ public class Game implements MouseListener {
 
     // Constructor
     public Game() {
-        playerMoved = false;
+        selectedCard = null;
+        pickColorScreen = false;
+        playerMove = false;
         gameIsOver = false;
         this.players = new Player[numPlayers];
 
@@ -61,6 +72,10 @@ public class Game implements MouseListener {
 
         this.window.addMouseListener(this);
 
+    }
+
+    public boolean getGameIsOver() {
+        return gameIsOver;
     }
 
     // Main game loop for entire round
@@ -136,21 +151,7 @@ public class Game implements MouseListener {
     }
 
     // Picking a color when the player plays a wild or darw 4
-    public Color pickColor() {
-        Scanner input = new Scanner(System.in);
-        System.out.println("What color do you want to choose?");
-        switch (input.nextLine().toLowerCase()) {
-            case "red":
-                return Color.red;
-            case "green":
-                return Color.green;
-            case "yellow":
-                return Color.yellow;
-            case "blue":
-                return Color.blue;
-        }
-        return Color.red;
-    }
+
 
     // Dealing the cards when a draw 4 or draw 2 is played
     public void drawCards(int numCards, Player player) {
@@ -161,7 +162,7 @@ public class Game implements MouseListener {
 
     // Checks if the card is avaliable by comparing it to the previous card played
     public boolean checkValid(Card card) {
-        if (card.getSuit().equals(Color.black)) {
+        if (card.getSuit().equals(Color.white)) {
             return true;
         } else if (card.getRank().equals(this.lastCard.getRank())) {
             return true;
@@ -224,8 +225,88 @@ public class Game implements MouseListener {
         return -1;
     }
 
+    public void clickedColor(int x, int y) {
+        if (y < 765&&y>710) {
+            if (x < 445 && x > 405) {
+                pickedColor = Color.red;
+            } else if (x > 455 && x < 495) {
+                pickedColor = Color.yellow;
+            } else if (x > 505 && x < 545) {
+                pickedColor = Color.green;
+            } else if (x > 555 && x < 595) {
+                pickedColor = Color.blue;
+            }
+        }
+
+    }
+
     public void mouseClicked(MouseEvent e) {
+
+
+
+    }
+
+    public void mousePressed(MouseEvent e) {
         int c = this.cardClicked(e.getX(), e.getY());
+        if (pickColorScreen) {
+            this.clickedColor(e.getX(), e.getY());
+            selectedCard.setSuit(pickedColor);
+            pickColorScreen = false;
+            playerMove = false;
+        } else if (playerMove && !pickColorScreen) {
+
+            if (this.clickedDraw(e.getX(), e.getY())) {
+                Card addedCard = this.deck.deal();
+                this.players[numPlayers - 1].addCard(addedCard);
+            }
+
+
+            else if (c != -1) {
+                //turn++;
+                window.repaint();
+                Card card = this.players[numPlayers-1].getHand().get(c);
+                if (this.checkValid(card)) {
+                    switch (card.getRank()) {
+                        case "Wild":
+                            selectedCard = card;
+                            pickColorScreen = true;
+                            break;
+                        case "Draw4":
+                            drawCards(4, this.players[0]);
+                            selectedCard = card;
+                            pickColorScreen = true;
+                            break;
+
+                        case "Draw2":
+                            drawCards(2, this.players[0]);
+                            break;
+                    }
+
+
+                    lastCard = this.players[numPlayers-1].getHand().remove(c);
+                    window.repaint();
+                    if (!pickColorScreen) {
+                        playerMove = false;
+                    }
+
+
+
+                }
+
+            }
+        } else if (!pickColorScreen){
+
+
+            if (turn < 2 || turn == 3) {
+                advanceTurn();
+            } else {
+                playerMove = true;
+                turn++;
+
+            }
+
+        }
+
         if (this.clickedInstructions(e.getX(), e.getY())) {
             window.setInstructScreen();
         }
@@ -242,51 +323,7 @@ public class Game implements MouseListener {
             this.players[numPlayers - 1].changeIndex(false);
         }
 
-        else if (this.clickedDraw(e.getX(), e.getY())) {
-            Card addedCard = this.deck.deal();
-            this.players[numPlayers - 1].addCard(addedCard);
-        }
-
-
-        else if (c != -1) {
-            //turn++;
-            window.repaint();
-            Card card = this.players[numPlayers-1].getHand().get(c);
-            if (this.checkValid(card)) {
-
-
-                switch (card.getRank()) {
-                    case "Wild" -> card.setSuit(pickColor());
-                    case "Draw4" -> {
-                        drawCards(4, this.players[0]);
-                        card.setSuit(pickColor());
-                    }
-                    case "Draw2" -> drawCards(2, this.players[0]);
-                }
-
-                lastCard = this.players[numPlayers-1].getHand().remove(c);
-                advanceTurn();
-
-            }
-
-        } else {
-            if (turn < 3) {
-                advanceTurn();
-            } else {
-                turn++;
-
-            }
-
-        }
-
         window.repaint();
-
-
-
-    }
-
-    public void mousePressed(MouseEvent e) {
-
     }
 
     public void mouseReleased(MouseEvent e) {
