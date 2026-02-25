@@ -4,7 +4,16 @@ public class Card {
     // Instance Variables
     private String rank;
     private Color suit;
+    private int x;
+    private int y;
 
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
     private final int cardWidth = 70;
     private final int cardHeight = 100;
 
@@ -33,7 +42,14 @@ public class Card {
         return this.suit + this.rank;
     }
 
-    public void draw(int x, int y, Graphics g) {
+    public boolean isClicked(int x, int y) {
+        if (x < this.x + cardWidth && x > this.x && y < this.y+cardHeight && y > this.y) {
+            return true;
+        }
+        return false;
+    }
+
+    public void draw(Graphics g) {
         g.setColor(this.suit);
         g.fillRect(x,y,cardWidth,cardHeight);
 
@@ -58,4 +74,6 @@ public class Card {
 
 
     }
+
+
 }

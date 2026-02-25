@@ -18,6 +18,10 @@ public class Player {
         startIndex = 0;
     }
 
+    public int getStartIndex() {
+        return startIndex;
+    }
+
     // Getters
     public String getName() {
         return name;
@@ -96,10 +100,16 @@ public class Player {
     public void drawPlayer(int x, int y, Graphics g) {
         int showSize=7;
         if (this.hand.size() - startIndex< 7) {
-            showSize = this.hand.size();
+            showSize = this.hand.size() % 7;
+        }
+        for (int i = 0; i < this.hand.size(); i++) {
+            this.hand.get(i).setX(99999);
+            this.hand.get(i).setY(99999);
         }
         for (int i = this.startIndex; i < startIndex + showSize; i ++) {
-            this.hand.get(i).draw(x - 430 + i * 110, y, g);
+            this.hand.get(i).setX(x - 430 + (i-this.startIndex) * 110);
+            this.hand.get(i).setY(y);
+            this.hand.get(i).draw(g);
         }
         g.drawString(this.name, x, y+150);
     }

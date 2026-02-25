@@ -12,6 +12,8 @@ public class Game implements MouseListener {
     private Card lastCard;
     private GameView window;
     private int turn;
+    private boolean playerMoved;
+
 
 
     private final int numPlayers = 4;
@@ -34,7 +36,7 @@ public class Game implements MouseListener {
 
     // Constructor
     public Game() {
-
+        playerMoved = false;
         gameIsOver = false;
         this.players = new Player[numPlayers];
 
@@ -54,41 +56,20 @@ public class Game implements MouseListener {
         Color[] suits = {Color.red, Color.green, Color.yellow, Color.blue};
         deck = new Deck(ranks, suits, this);
         lastCard = this.deck.deal();
-
+        turn = -1;
         window = new GameView(this);
 
         this.window.addMouseListener(this);
+
     }
 
     // Main game loop for entire round
     public void playGame() {
         // Game setup
-        this.printInstructions();
         this.distributeCards();
 
         // Variables to keep track of who's turn it is
-        int step = 0;
-
-        // Game loop
-        while (!gameIsOver) {
-            // Determining who's turn it is and then executing the turn
-            window.repaint();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            turn = step % this.players.length;
-            window.repaint();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            this.lastCard = this.playTurn(turn);
-            this.gameIsOver = this.checkGameOver();
-            step++;
-        }
+        advanceTurn();
     }
 
     // Checks if the game is over by looping through each player and checking if their hand is empty
@@ -102,67 +83,29 @@ public class Game implements MouseListener {
         return false;
     }
 
+    private void advanceTurn() {
+
+        turn = (turn + 1) % numPlayers;
+        window.repaint();
+
+        lastCard = playTurn(turn);
+        gameIsOver = checkGameOver();
+        window.repaint();
+
+
+        window.repaint();
+    }
+
     // Main loop for each turn
     public Card playTurn(int turn) {
-        Scanner input = new Scanner(System.in);
+        window.repaint();
+
         Player player = this.players[turn];
         Player nextPlayer = this.players[(turn + 1) % this.players.length];
-
-        // Loop for input
-        while (true) {
-            boolean computerTurn = player.getName().startsWith("Computer ");
-
-            // Human turn instructions
-            if (!computerTurn) {
-                // Prompting user for an action, parses the input and then checks if the turn is valid
-
-                System.out.println();
-                System.out.println(player.getHand());
-                System.out.println("Current card: " + this.lastCard);
-                System.out.println("What do you want to do? Either type in 'draw' or 'play [# of Card in array]'");
-                String action;
-                int index;
-                boolean condition;
-                boolean correctFormat;
-                do {
-                    System.out.println("Play a valid action: ");
-                    action = input.nextLine();
-                    correctFormat = (action.equals("sort") || action.equals("draw") || (action.startsWith("play ")));
-                    if (action.startsWith("play ")) {
-                        index = Integer.parseInt(action.split(" ")[1]) - 1;
-                        condition = !correctFormat || !this.checkValid(player.getHand().get(index));
-                    } else {
-                        condition = !correctFormat;
-                    }
-                } while (condition);
-
-
-
-                // Allows the users to sort the cards
-                if (action.equals("sort")) {
-                    player.sortHand();
-                } else if (action.equals("draw")) {
-                    // Let the player draw a card
-                    Card addedCard = this.deck.deal();
-                    player.addCard(addedCard);
-                    System.out.println(addedCard);
-                } else {
-                    // Perform special card actions
-                    Card card = player.getHand().get(Integer.parseInt(action.split(" ")[1]) - 1);
-                    switch (card.getRank()) {
-                        case "Wild" -> card.setSuit(pickColor());
-                        case "Draw4" -> {
-                            drawCards(4, nextPlayer);
-                            card.setSuit(pickColor());
-                        }
-                        case "Draw2" -> drawCards(2, nextPlayer);
-                    }
-
-                    // Remove the card from the hand and "play" the card
-                    return player.getHand().remove(Integer.parseInt(action.split(" ")[1]) - 1);
-                }
-            } else {
-                // Computer actoin which cycles through each of their cards and plays the first valid one
+        boolean computerTurn = player.getName().startsWith("Computer ");
+        // Human turn instructions
+        if (computerTurn) {
+            while (true) {
                 for (Card card : player.getHand()) {
                     if (this.checkValid(card)) {
                         switch (card.getRank()) {
@@ -175,17 +118,15 @@ public class Game implements MouseListener {
                         }
 
                         // Prints out the move and plays the card
-                        System.out.println(player.getName() + " plays " + card + " with " + (player.getHand().size() - 1) + " cards left.");
                         return player.getHand().remove(player.getHand().indexOf(card));
                     }
                 }
                 // Draw card if no avaliable cards
                 player.addCard(this.deck.deal());
             }
-
-
-
         }
+        return lastCard;
+
     }
 
     // Picking a color when the computer plays a wild or draw 4
@@ -227,17 +168,6 @@ public class Game implements MouseListener {
         } else return card.getSuit().equals(this.lastCard.getSuit());
     }
 
-    // Prints the instructions
-    public void printInstructions() {
-        String string = "Instructions:\nEach player starts with 7 cards. Every turn, you draw any number of cards " +
-                        "from the deck until you can play a card. You are allowed to continue drawing even if you " +
-                        "have an available card.\nYou can only play a card if it is the same color or number as the " +
-                        " previous card (unless it is a Wild or Draw 4. The goal of the game is end with no cards." +
-                        "\nSpecial cards:\n - Draw 2: The next person must draw 2 cards " +
-                        "\n - Wild: Lets you choose the color\n - Draw 4: Wild + makes the next person Draw 4";
-
-        System.out.println(string);
-    }
 
     // Distributes the cards to the player
     public void distributeCards() {
@@ -256,24 +186,99 @@ public class Game implements MouseListener {
     }
 
     private boolean clickedSort(int x, int y) {
-        if (x<970 && x>870 && y < 900 && y > 850) {
+        if (x<970 && x>870 && y < 930 && y > 880) {
             return true;
         }
         return false;
     }
     public boolean clickedRight(int x, int y) {
-        return true;
+        if (x > 815 && x < 845 && y < 925 && y > 825) {
+            if ((this.players[numPlayers - 1].getHand().size()-1) > (this.players[numPlayers - 1].getStartIndex()+6)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean clickedLeft(int x, int y) {
+        if (x > 25 && x < 55 && y < 925 && y > 825) {
+            if (this.players[numPlayers - 1].getStartIndex()>0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean clickedDraw(int x, int y) {
+        if (x<970 && x > 870 && y < 870 && y > 820) {
+            return true;
+        }
+        return false;
+    }
+
+    public int cardClicked(int x, int y) {
+        for (int i = 0; i < this.players[numPlayers - 1].getHand().size(); i++) {
+            if (this.players[numPlayers-1].getHand().get(i).isClicked(x, y)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void mouseClicked(MouseEvent e) {
+        int c = this.cardClicked(e.getX(), e.getY());
         if (this.clickedInstructions(e.getX(), e.getY())) {
             window.setInstructScreen();
         }
-        window.repaint();
 
-        if (this.clickedSort(e.getX(), e.getY())) {
+        else if (this.clickedSort(e.getX(), e.getY())) {
             this.players[numPlayers - 1].sortHand();
         }
+
+        else if (this.clickedRight(e.getX(), e.getY())) {
+            this.players[numPlayers - 1].changeIndex(true);
+        }
+
+        else if (this.clickedLeft(e.getX(), e.getY())) {
+            this.players[numPlayers - 1].changeIndex(false);
+        }
+
+        else if (this.clickedDraw(e.getX(), e.getY())) {
+            Card addedCard = this.deck.deal();
+            this.players[numPlayers - 1].addCard(addedCard);
+        }
+
+
+        else if (c != -1) {
+            //turn++;
+            window.repaint();
+            Card card = this.players[numPlayers-1].getHand().get(c);
+            if (this.checkValid(card)) {
+
+
+                switch (card.getRank()) {
+                    case "Wild" -> card.setSuit(pickColor());
+                    case "Draw4" -> {
+                        drawCards(4, this.players[0]);
+                        card.setSuit(pickColor());
+                    }
+                    case "Draw2" -> drawCards(2, this.players[0]);
+                }
+
+                lastCard = this.players[numPlayers-1].getHand().remove(c);
+                advanceTurn();
+
+            }
+
+        } else {
+            if (turn < 3) {
+                advanceTurn();
+            } else {
+                turn++;
+
+            }
+
+        }
+
         window.repaint();
 
 

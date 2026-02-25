@@ -65,9 +65,14 @@ public class GameView extends JFrame {
         }
 
         g.setColor(Color.gray);
-        g.fillRect(870, 850, 100, 50);
+        g.fillRect(870, 880, 100, 50);
         g.setColor(Color.black);
-        g.drawString("Sort", 900, 882);
+        g.drawString("Sort", 900, 912);
+
+        g.setColor(Color.gray);
+        g.fillRect(870, 820, 100, 50);
+        g.setColor(Color.black);
+        g.drawString("Draw", 895, 852);
 
         g.setColor(Color.gray);
         Polygon rightArrow = new Polygon();

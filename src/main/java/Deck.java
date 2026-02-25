@@ -79,8 +79,9 @@ public class Deck {
             g.drawString(Integer.toString(this.getCardsLeft()), x+87, y+85);
 
         }
-
-        game.getLastCard().draw(x-50, y, g);
+        game.getLastCard().setX(x-50);
+        game.getLastCard().setY(y);
+        game.getLastCard().draw(g);
     }
 
 
