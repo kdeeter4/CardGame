@@ -1,13 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
 
-
 public class GameView extends JFrame {
+    // Instance variables
     private Game backend;
-    private final int WINDOW_WIDTH = 1000;
-    private final int WINDOW_HEIGHT = 1000;
     private boolean instructScreen;
 
+    // Constants
+    private final int WINDOW_WIDTH = 1000;
+    private final int WINDOW_HEIGHT = 1000;
+
+    // Constructor
     public GameView(Game backend) {
         this.backend = backend;
 
@@ -19,46 +22,41 @@ public class GameView extends JFrame {
         this.setVisible(true);
     }
 
+    // Toggles the instruction screen
     public void setInstructScreen() {
         instructScreen = !instructScreen;
     }
 
+    // Paints the scene
     public void paint(Graphics g) {
-        if (backend.getGameIsOver()) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        // Green background
         g.setColor(new Color(2, 82, 8));
         g.fillRect(0, 0, 1000, 1000);
 
+        // Instruction icon
         g.setColor(Color.white);
         g.fillOval(940, 40, 50, 50);
         g.setColor(Color.black);
         g.setFont(new Font("Arial", Font.BOLD, 40));
         g.drawString("?", 953, 80);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
-        if (instructScreen) {
 
+        if (instructScreen) {
+            // Writes the instruction screen
             g.drawString("Instructions: Each player starts with 7 cards. Every turn, you draw any number of cards " +
-                    "from the deck", 10, 100);
+                    "from the deck", 10, 120);
             g.drawString("until you can play a card. You are allowed to continue drawing even if you have an " +
-                    "available card.", 10, 130);
+                    "available card.", 10, 150);
             g.drawString("You can only play a card if it is the same color or number as the previous card (unless " +
                     "it is a Wild", 10, 160);
-            g.drawString("or Draw 4. The goal of the game is end with no cards.", 10, 190);
+            g.drawString("or Draw 4. The goal of the game is end with no cards.", 10, 210);
 
-            g.drawString("Special cards:", 10, 250);
-            g.drawString("- Draw 2: The next person must draw 2 cards ", 10, 280);
-            g.drawString("- Wild: Lets you choose the color", 10, 310);
-            g.drawString("- Draw 4: Wild + makes the next person Draw 4", 10, 340);
-
-
-
+            g.drawString("Special cards:", 10, 270);
+            g.drawString("- Draw 2: The next person must draw 2 cards ", 10, 300);
+            g.drawString("- Wild: Lets you choose the color", 10, 330);
+            g.drawString("- Draw 4: Wild + makes the next person Draw 4", 10, 360);
             return;
         } else if (backend.getGameIsOver()) {
+            // Writes the game over message
             String s;
             s="Game over";
             for (Player player : backend.getPlayers()) {
@@ -67,21 +65,17 @@ public class GameView extends JFrame {
                     s += " wins";
                 }
             }
-            g.drawString(s, 10, 100);
-            return;
+            g.setFont(new Font("Arial", Font.BOLD, 100));
+            g.drawString(s, 100, 700);
         }
+
+        // Creates all the buttons at the same time so it doesn't have to keep switching colors
+        g.setFont(new Font("Arial", Font.BOLD, 20));
 
         g.setColor(Color.gray);
         g.fillRect(870, 880, 100, 50);
-        g.setColor(Color.black);
-        g.drawString("Sort", 900, 912);
-
-        g.setColor(Color.gray);
         g.fillRect(870, 820, 100, 50);
-        g.setColor(Color.black);
-        g.drawString("Draw", 895, 852);
 
-        g.setColor(Color.gray);
         Polygon rightArrow = new Polygon();
         rightArrow.addPoint(815, 825);
         rightArrow.addPoint(845, 875);
@@ -94,13 +88,18 @@ public class GameView extends JFrame {
         leftArrow.addPoint(55, 925);
         g.fillPolygon(leftArrow);
 
+        g.setColor(Color.black);
+        g.drawString("Sort", 900, 912);
+        g.drawString("Draw", 895, 852);
 
+        // Draws the deck and players
         backend.getDeck().draw(465, 475, g);
         backend.getPlayers()[0].drawCpu(65, 475, g, 1);
         backend.getPlayers()[1].drawCpu(465, 98, g, 2);
         backend.getPlayers()[2].drawCpu(865, 475, g, 3);
         backend.getPlayers()[3].drawPlayer(500, 825, g);
 
+        // Draws the icon to pick the color
         if (backend.getPickColorScreen()) {
             g.setColor(Color.gray);
             g.fillRect(395, 700, 210, 75);

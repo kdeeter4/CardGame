@@ -18,11 +18,11 @@ public class Player {
         startIndex = 0;
     }
 
+    // Getters
     public int getStartIndex() {
         return startIndex;
     }
 
-    // Getters
     public String getName() {
         return name;
     }
@@ -39,28 +39,17 @@ public class Player {
     // Orders the card for the sort function
     private int orderCard(Card c1, Card c2) {
         ArrayList<Color> colors = new ArrayList<>();
-        colors.add(Color.red);colors.add(Color.yellow);colors.add(Color.green);colors.add(Color.blue);colors.add(Color.black);
-        ArrayList<String> ranks = new ArrayList<>();
-        for (int i = 0; i < 10; i ++) {
-            ranks.add(String.valueOf(i));
-        }
-        ranks.add("Draw2");
+        colors.add(Color.red);
+        colors.add(Color.yellow);
+        colors.add(Color.green);
+        colors.add(Color.blue);
+        colors.add(Color.black);
 
         if (colors.indexOf(c2.getSuit()) > colors.indexOf(c1.getSuit())) {
             return -1;
         }
 
-        if (c1.getSuit().equals("")) {
-            if (c2.getRank().equals("Wild") && c1.getRank().equals(("Draw4"))) {
-                return -1;
-            }
-        }
-
-        if (ranks.indexOf(c2.getSuit()) < ranks.indexOf(c1.getSuit())) {
-            return -1;
-        }
         return 1;
-
     }
 
     // Sorts the hand with colors and numbers
@@ -68,7 +57,9 @@ public class Player {
         hand.sort((a,b) -> {return this.orderCard(a, b);});
     }
 
+    // Draws the computer icon
     public void drawCpu(int x, int y, Graphics g, int number) {
+        // Draws the computer's hand
         g.setColor(Color.black);
         g.fillRect(x, y, cardWidth, cardHeight);
 
@@ -83,12 +74,17 @@ public class Player {
             g.drawString(Integer.toString(this.hand.size()), x+37, y+85);
 
         }
+
+        // Makes the name blue if its the computer's turn
         if (number - 1 == game.getTurn()) {
             g.setColor(Color.blue);
         }
+
+        // Draws the compouters name
         g.drawString("Computer " + number, x-40, y-20);
     }
 
+    // Changes the index for the players hand when scrolling through cards
     public void changeIndex(boolean posneg) {
         if (posneg) {
             startIndex += 7;
@@ -97,20 +93,28 @@ public class Player {
         }
     }
 
+    // Draws out the players hand
     public void drawPlayer(int x, int y, Graphics g) {
+        // Determines what section of the cards to show
         int showSize=7;
         if (this.hand.size() - startIndex< 7) {
             showSize = this.hand.size() % 7;
         }
+
+        // If the card is not shown, put it far away (I needed this because I ran into problems when scrolling)
         for (int i = 0; i < this.hand.size(); i++) {
             this.hand.get(i).setX(99999);
             this.hand.get(i).setY(99999);
         }
+
+        // Show the chosen cards
         for (int i = this.startIndex; i < startIndex + showSize; i ++) {
             this.hand.get(i).setX(x - 430 + (i-this.startIndex) * 110);
             this.hand.get(i).setY(y);
             this.hand.get(i).draw(g);
         }
+
+        // Draws player nam and makes it blue if its their turn
         g.setColor(Color.black);
         if (game.getPlayerMove()) {
             g.setColor(Color.blue);

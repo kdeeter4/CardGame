@@ -7,13 +7,7 @@ public class Card {
     private int x;
     private int y;
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
+    // Constants
     private final int cardWidth = 70;
     private final int cardHeight = 100;
 
@@ -24,6 +18,14 @@ public class Card {
     }
 
     // Getters + Setters
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public String getRank() {
         return rank;
     }
@@ -42,6 +44,7 @@ public class Card {
         return this.suit + this.rank;
     }
 
+    // Checks if the card was clicked
     public boolean isClicked(int x, int y) {
         if (x < this.x + cardWidth && x > this.x && y < this.y+cardHeight && y > this.y) {
             return true;
@@ -49,13 +52,15 @@ public class Card {
         return false;
     }
 
+    // Draws the card on the screen at the correct position
     public void draw(Graphics g) {
+        // Draws card background (color)
         g.setColor(this.suit);
         g.fillRect(x,y,cardWidth,cardHeight);
 
+        // Draws card number or symbol
         g.setColor(Color.black);
         g.setFont(new Font("Arial", Font.BOLD, 50));
-
 
         switch (this.rank) {
             case "Draw2":
@@ -70,10 +75,5 @@ public class Card {
             default:
                 g.drawString(this.rank, x+22, y+65);
         }
-
-
-
     }
-
-
 }
