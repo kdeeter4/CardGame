@@ -42,12 +42,13 @@ public class GameView extends JFrame {
 
         if (instructScreen) {
             // Writes the instruction screen
+            g.setFont(new Font("Arial", Font.BOLD, 20));
             g.drawString("Instructions: Each player starts with 7 cards. Every turn, you draw any number of cards " +
                     "from the deck", 10, 120);
             g.drawString("until you can play a card. You are allowed to continue drawing even if you have an " +
                     "available card.", 10, 150);
             g.drawString("You can only play a card if it is the same color or number as the previous card (unless " +
-                    "it is a Wild", 10, 160);
+                    "it is a Wild", 10, 180);
             g.drawString("or Draw 4. The goal of the game is end with no cards.", 10, 210);
 
             g.drawString("Special cards:", 10, 270);
