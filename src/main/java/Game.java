@@ -29,6 +29,7 @@ public class Game implements MouseListener {
         playerMove = false;
         gameIsOver = false;
         this.players = new Player[numPlayers];
+        restackCards = new ArrayList<>();
 
         // Creates computer players
         for (int i = 0; i < numPlayers - 1; i++) {
@@ -118,6 +119,7 @@ public class Game implements MouseListener {
     // Restacks the deck after it
     public void restackDeck(ArrayList<Card> cards) {
         if(deck.isEmpty()) {
+            deck.clear();
             for(Card c : cards) {
                 if(c != lastCard) {
                     deck.addCard(c);
@@ -306,6 +308,9 @@ public class Game implements MouseListener {
             // Allows user to draw a card
             if (this.clickedDraw(e.getX(), e.getY())) {
                 Card addedCard = this.deck.deal();
+                if (addedCard == null) {
+                    restackDeck(restackCards);
+                }
                 this.players[numPlayers - 1].addCard(addedCard);
             }
 
