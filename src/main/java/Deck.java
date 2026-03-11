@@ -49,6 +49,11 @@ public class Deck {
         return this.cards.get(this.cardsLeft-- - 1);
     }
 
+    public void addCard(Card card) {
+        cards.add(card);
+        cardsLeft++;
+    }
+
     // Reorders the cards
     public void shuffle() {
         cardsLeft = this.cards.size();
