@@ -1,5 +1,6 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.awt.Color;
 
@@ -16,6 +17,7 @@ public class Game implements MouseListener {
     private boolean pickColorScreen;
     private Color pickedColor;
     private Card selectedCard;
+    private ArrayList<Card> restackCards;
 
     // Constants
     private final int numPlayers = 4;
@@ -27,6 +29,7 @@ public class Game implements MouseListener {
         playerMove = false;
         gameIsOver = false;
         this.players = new Player[numPlayers];
+        restackCards = new ArrayList<>();
 
         // Creates computer players
         for (int i = 0; i < numPlayers - 1; i++) {
@@ -113,6 +116,19 @@ public class Game implements MouseListener {
         window.repaint();
     }
 
+    // Restacks the deck after it
+    public void restackDeck(ArrayList<Card> cards) {
+        if(deck.isEmpty()) {
+            deck.clear();
+            for(Card c : cards) {
+                if(c != lastCard) {
+                    deck.addCard(c);
+                }
+            }
+            deck.shuffle();
+        }
+    }
+
     // Main loop for each computer turn
     public Card playTurn(int turn) {
         Player player = this.players[turn];
@@ -141,6 +157,7 @@ public class Game implements MouseListener {
                 player.addCard(this.deck.deal());
             }
         }
+
         return lastCard;
 
     }
@@ -291,6 +308,9 @@ public class Game implements MouseListener {
             // Allows user to draw a card
             if (this.clickedDraw(e.getX(), e.getY())) {
                 Card addedCard = this.deck.deal();
+                if (addedCard == null) {
+                    restackDeck(restackCards);
+                }
                 this.players[numPlayers - 1].addCard(addedCard);
             }
 
@@ -317,6 +337,10 @@ public class Game implements MouseListener {
 
                     // Plays the card and shows it
                     lastCard = this.players[numPlayers-1].getHand().remove(c);
+                    restackCards.add(lastCard);
+                    if (deck.isEmpty()) {
+                        restackDeck(restackCards);
+                    }
                     window.repaint();
                     if (!pickColorScreen) {
                         playerMove = false;

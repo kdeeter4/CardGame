@@ -49,6 +49,14 @@ public class Deck {
         return this.cards.get(this.cardsLeft-- - 1);
     }
 
+
+
+    // Adds given card back to deck of cards. Increases cardsLeft accordingly
+    public void addCard(Card card) {
+        cards.add(card);
+        cardsLeft++;
+    }
+
     // Reorders the cards
     public void shuffle() {
         cardsLeft = this.cards.size();
@@ -59,6 +67,10 @@ public class Deck {
             this.cards.set(i, this.cards.get(r));
             this.cards.set(r, temp);
         }
+    }
+
+    public void clear() {
+        cards.clear();
     }
 
     // Draws the deck with the number of cards left and the last card next to it
