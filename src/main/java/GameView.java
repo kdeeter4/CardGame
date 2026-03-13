@@ -40,7 +40,7 @@ public class GameView extends JFrame {
         g.setFont(new Font("Arial", Font.BOLD, 40));
         g.drawString("?", 953, 80);
 
-        // --- ADD THIS BLOCK: Restart Button ---
+        // Restart button
         g.setColor(Color.white);
         g.fillOval(10, 40, 50, 50); // Same 50x50 dimensions as the "?" icon
         g.setColor(Color.black);

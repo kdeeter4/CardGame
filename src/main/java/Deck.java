@@ -40,7 +40,6 @@ public class Deck {
         return this.cardsLeft;
     }
 
-    // Removes a card and returns it
     // Removes a card and returns it. If the deck is empty, it refills it first.
     public Card deal() {
         if (this.isEmpty()) {
