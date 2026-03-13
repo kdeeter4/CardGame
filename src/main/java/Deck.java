@@ -40,10 +40,33 @@ public class Deck {
         return this.cardsLeft;
     }
 
-    // Removes a card and returns it
+    // Removes a card and returns it. If the deck is empty, it refills it first.
     public Card deal() {
         if (this.isEmpty()) {
-            return null;
+            // Refill the deck with a brand new set of cards
+            String[] ranks = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Draw2"};
+            Color[] suits = {Color.red, Color.green, Color.yellow, Color.blue};
+
+            this.cards.clear();
+
+            // Re-make the standard colored cards
+            for (int i = 0; i < ranks.length; i++) {
+                for (Color suit : suits) {
+                    for (int j = 0; j < 2; j++) {
+                        this.cards.add(new Card(ranks[i], suit));
+                    }
+                }
+            }
+
+            // Re-make the wild cards
+            for (int i = 0; i < 3; i++) {
+                this.cards.add(new Card("Wild", Color.white));
+                this.cards.add(new Card("Draw4", Color.white));
+            }
+
+            // Reset the card count and shuffle the new deck
+            this.cardsLeft = this.cards.size();
+            this.shuffle();
         }
 
         return this.cards.get(this.cardsLeft-- - 1);

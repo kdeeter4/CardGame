@@ -7,7 +7,7 @@ import java.awt.Color;
 public class Game implements MouseListener {
     // Instance Variables
     private final Player[] players;
-    private final Deck deck;
+    private Deck deck; // Removed 'final' here so we can instantiate a new deck
     private boolean gameIsOver;
     private Card lastCard;
     private GameView window;
@@ -48,6 +48,40 @@ public class Game implements MouseListener {
 
         this.window.addMouseListener(this);
 
+    }
+
+    // Checks if the restart button was clicked
+    private boolean clickedRestart(int x, int y) {
+        // Updated bounds for x to match the new width of 50 (10 to 60)
+        if (x > 10 && x < 60 && y < 90 && y > 40) {
+            return true;
+        }
+        return false;
+    }
+
+    // Resets the game variables, clears hands, and generates a new deck
+    public void restartGame() {
+        gameIsOver = false;
+        turn = -1;
+        playerMove = false;
+        pickColorScreen = false;
+        selectedCard = null;
+
+        // Clear hands and reset card scroll index
+        for (Player player : this.players) {
+            player.getHand().clear();
+            player.resetStartIndex();
+        }
+
+        // Create a new deck
+        String[] ranks = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Draw2"};
+        Color[] suits = {Color.red, Color.green, Color.yellow, Color.blue};
+        this.deck = new Deck(ranks, suits, this);
+        this.lastCard = this.deck.deal();
+
+        // Deal new hands and begin
+        this.distributeCards();
+        this.advanceTurn();
     }
 
     // Getters and setters
@@ -247,13 +281,20 @@ public class Game implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
-        // Prevents the user from doing anything after game is over
+        // Check for restart FIRST so it can be clicked even if the game is over
+        if (this.clickedRestart(e.getX(), e.getY())) {
+            this.restartGame();
+            return;
+        }
+
+        // Prevents the user from doing anything else after game is over
         if (gameIsOver) {
             return;
         }
 
         // Gets position of clicked card
         int c = this.cardClicked(e.getX(), e.getY());
+
 
         if (this.clickedInstructions(e.getX(), e.getY())) {
             // Clicking the instruction screen
