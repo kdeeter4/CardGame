@@ -122,4 +122,9 @@ public class Player {
         g.drawString(this.name, x, y+150);
     }
 
+    // Resets the start index for a new game
+    public void resetStartIndex() {
+        this.startIndex = 0;
+    }
+
 }
